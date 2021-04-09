@@ -107,9 +107,9 @@ function install_consolidated_knative_kafka_channel(){
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-channel-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-consolidated-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-consolidated-controller}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-consolidated-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-consolidated-dispatcher}|g" ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-webhook}|g"                                 ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-consolidated-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-consolidated-controller}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-consolidated-dispatcher|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-consolidated-dispatcher}|g" ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-webhook|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-webhook}|g"                                 ${RELEASE_YAML}
 
   cat ${RELEASE_YAML} \
   | sed "s/REPLACE_WITH_CLUSTER_URL/${KAFKA_CLUSTER_URL}/" \
@@ -123,8 +123,8 @@ function install_knative_kafka_source(){
 
   RELEASE_YAML="openshift/release/knative-eventing-kafka-source-ci.yaml"
 
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-source-controller}|g"   ${RELEASE_YAML}
-  sed -i -e "s|registry.svc.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-receive-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-receive-adapter}|g"       ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-source-controller|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-source-controller}|g"   ${RELEASE_YAML}
+  sed -i -e "s|registry.ci.openshift.org/openshift/knative-.*:knative-eventing-kafka-receive-adapter|${IMAGE_FORMAT//\$\{component\}/knative-eventing-kafka-receive-adapter}|g"       ${RELEASE_YAML}
 
   cat ${RELEASE_YAML} \
   | oc apply --filename -
