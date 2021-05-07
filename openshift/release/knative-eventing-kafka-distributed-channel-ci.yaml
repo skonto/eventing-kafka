@@ -468,7 +468,7 @@ spec:
       serviceAccountName: eventing-kafka-channel-controller
       containers:
       - name: eventing-kafka
-        image: registry.ci.openshift.org/openshift/knative-v0.22.0:knative-eventing-kafka-distributed-controller
+        image: registry.ci.openshift.org/openshift/knative-v0.22.3:knative-eventing-kafka-distributed-controller
         imagePullPolicy: IfNotPresent # Must be IfNotPresent or Never if used with ko.local
         ports:
         - containerPort: 8081
@@ -495,9 +495,9 @@ spec:
         - name: METRICS_DOMAIN
           value: "eventing-kafka"
         - name: RECEIVER_IMAGE
-          value: "registry.ci.openshift.org/openshift/knative-v0.22.0:knative-eventing-kafka-receiver"
+          value: "registry.ci.openshift.org/openshift/knative-v0.22.3:knative-eventing-kafka-receiver"
         - name: DISPATCHER_IMAGE
-          value: "registry.ci.openshift.org/openshift/knative-v0.22.0:knative-eventing-kafka-distributed-dispatcher"
+          value: "registry.ci.openshift.org/openshift/knative-v0.22.3:knative-eventing-kafka-distributed-dispatcher"
         resources:
           requests:
             cpu: 20m
@@ -526,7 +526,7 @@ spec:
       containers:
       - name: kafka-webhook
         terminationMessagePolicy: FallbackToLogsOnError
-        image: registry.ci.openshift.org/openshift/knative-v0.22.0:knative-eventing-kafka-webhook
+        image: registry.ci.openshift.org/openshift/knative-v0.22.3:knative-eventing-kafka-webhook
         env:
         - name: SYSTEM_NAMESPACE
           valueFrom:
