@@ -17,9 +17,9 @@ cat >> "$TMPDIR"/reporterConfig <<EOF
 EOF
 
 
-# Deduce X.Y.Z version from branch name
+# Deduce X.Y version from branch name
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-VERSION=$(echo $BRANCH | sed -E 's/^.*(v[0-9]+\.[0-9]+\.[0-9]+|next)|.*/\1/')
+VERSION=$(echo $BRANCH | sed -E 's/^.*(v[0-9]+\.[0-9]+|next)|.*/\1/')
 test -n "$VERSION" || fail "'$BRANCH' is not a release branch"
 VER=$(echo $VERSION | sed 's/\./_/;s/\.[0-9]\+$//') # X_Y form of version
 
