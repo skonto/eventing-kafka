@@ -1,11 +1,23 @@
-# Initial set of approvers taken from eventing WG leads, Kafka approvers and original developers of the channel added
+# The OWNERS file is used by prow to automatically merge approved PRs.
+
 approvers:
-- technical-oversight-committee
-- knative-release-leads
-- eventing-writers
-- eventing-kafka-approvers
+- devguyio
+- alanfx
+- aliok
+- lberk
+- markusthoemmes
+- matzew
+- mgencur
+- slinkydeveloper
+- warrenvw
 
 reviewers:
-- eventing-writers
-- eventing-kafka-approvers
-
+- devguyio
+- alanfx
+- aliok
+- lberk
+- markusthoemmes
+- matzew
+- mgencur
+- slinkydeveloper
+- warrenvw
