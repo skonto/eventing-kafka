@@ -23,6 +23,7 @@ import (
 	"sync"
 	"sync/atomic"
 
+
 	"github.com/Shopify/sarama"
 	protocolkafka "github.com/cloudevents/sdk-go/protocol/kafka_sarama/v2"
 	"github.com/cloudevents/sdk-go/v2/binding"
@@ -32,14 +33,15 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/sets"
 
+	eventingchannels "knative.dev/eventing/pkg/channel"
+	"knative.dev/pkg/kmeta"
+
 	"knative.dev/eventing-kafka/pkg/channel/consolidated/utils"
 	"knative.dev/eventing-kafka/pkg/channel/distributed/common/env"
 	"knative.dev/eventing-kafka/pkg/common/client"
 	"knative.dev/eventing-kafka/pkg/common/consumer"
 	"knative.dev/eventing-kafka/pkg/common/tracing"
-	eventingchannels "knative.dev/eventing/pkg/channel"
 	"knative.dev/eventing/pkg/kncloudevents"
-	"knative.dev/pkg/kmeta"
 )
 
 const (
@@ -65,6 +67,7 @@ type KafkaDispatcher struct {
 
 	receiver   *eventingchannels.MessageReceiver
 	dispatcher *eventingchannels.MessageDispatcherImpl
+	reporter   eventingchannels.StatsReporter
 
 	kafkaSyncProducer    sarama.SyncProducer
 	channelSubscriptions map[eventingchannels.ChannelReference]*KafkaSubscription
@@ -124,6 +127,7 @@ func NewDispatcher(ctx context.Context, args *KafkaDispatcherArgs) (*KafkaDispat
 		return nil, err
 	}
 	reporter := eventingchannels.NewStatsReporter(containerName, kmeta.ChildName(podName, uuid.New().String()))
+	dispatcher.reporter = reporter
 	receiverFunc, err := eventingchannels.NewMessageReceiver(
 		func(ctx context.Context, channel eventingchannels.ChannelReference, message binding.Message, transformers []binding.Transformer, _ nethttp.Header) error {
 			kafkaProducerMessage := sarama.ProducerMessage{
@@ -265,6 +269,8 @@ func (d *KafkaDispatcher) subscribe(channelRef eventingchannels.ChannelReference
 		d.dispatcher,
 		d.channelSubscriptions[channelRef],
 		groupID,
+		d.reporter,
+		channelRef.Namespace,
 	}
 	d.logger.Debugw("Starting consumer group", zap.Any("channelRef", channelRef),
 		zap.Any("subscription", sub.UID), zap.String("topic", topicName), zap.String("consumer group", groupID))
