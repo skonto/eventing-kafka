@@ -153,6 +153,6 @@ func (h *Handler) consumeMessage(context context.Context, consumerMessage *saram
 	defer span.End()
 
 	// Dispatch The Message With Configured Retries & Return Any Errors
-	_, dispatchError := h.MessageDispatcher.DispatchMessageWithRetries(ctx, message, nil, destinationURL, replyURL, deadLetterURL, retryConfig)
+	_, dispatchError := h.MessageDispatcher.DispatchMessageWithRetries(ctx, message, nil, destinationURL, replyURL, deadLetterURL, retryConfig, nil)
 	return dispatchError
 }
