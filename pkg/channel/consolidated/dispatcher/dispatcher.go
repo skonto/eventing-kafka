@@ -59,6 +59,7 @@ type KafkaDispatcherArgs struct {
 type KafkaDispatcher struct {
 	receiver   *eventingchannels.MessageReceiver
 	dispatcher *eventingchannels.MessageDispatcherImpl
+	reporter   eventingchannels.StatsReporter
 
 	// Receiver data structures
 	// map[string]eventingchannels.ChannelReference
@@ -123,6 +124,7 @@ func NewDispatcher(ctx context.Context, args *KafkaDispatcherArgs) (*KafkaDispat
 		return nil, err
 	}
 	reporter := eventingchannels.NewStatsReporter(containerName, kmeta.ChildName(podName, uuid.New().String()))
+	dispatcher.reporter = reporter
 	receiverFunc, err := eventingchannels.NewMessageReceiver(
 		func(ctx context.Context, channel eventingchannels.ChannelReference, message binding.Message, transformers []binding.Transformer, _ nethttp.Header) error {
 			kafkaProducerMessage := sarama.ProducerMessage{
@@ -314,6 +316,8 @@ func (d *KafkaDispatcher) subscribe(channelRef types.NamespacedName, sub Subscri
 		d.dispatcher,
 		kafkaSubscription,
 		groupID,
+		d.reporter,
+		channelRef.Namespace,
 	}
 	d.logger.Debugw("Starting consumer group", zap.Any("channelRef", channelRef),
 		zap.Any("subscription", sub.UID), zap.String("topic", topicName), zap.String("consumer group", groupID))

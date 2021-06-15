@@ -27,6 +27,8 @@ import (
 	"knative.dev/eventing-kafka/pkg/common/consumer"
 	"knative.dev/eventing-kafka/pkg/common/tracing"
 	eventingchannels "knative.dev/eventing/pkg/channel"
+	fanout "knative.dev/eventing/pkg/channel/fanout"
+	"knative.dev/eventing/pkg/kncloudevents"
 )
 
 type consumerMessageHandler struct {
@@ -35,6 +37,8 @@ type consumerMessageHandler struct {
 	dispatcher        *eventingchannels.MessageDispatcherImpl
 	kafkaSubscription *KafkaSubscription
 	consumerGroup     string
+	reporter          eventingchannels.StatsReporter
+	channelNs         string
 }
 
 var _ consumer.KafkaConsumerHandler = (*consumerMessageHandler)(nil)
@@ -69,7 +73,9 @@ func (c consumerMessageHandler) Handle(ctx context.Context, consumerMessage *sar
 	ctx, span := tracing.StartTraceFromMessage(c.logger, ctx, message, consumerMessage.Topic)
 	defer span.End()
 
-	_, err := c.dispatcher.DispatchMessageWithRetries(
+	te := kncloudevents.TypeExtractorTransformer("")
+
+	dispatchExecutionInfo, err := c.dispatcher.DispatchMessageWithRetries(
 		ctx,
 		message,
 		nil,
@@ -77,7 +83,14 @@ func (c consumerMessageHandler) Handle(ctx context.Context, consumerMessage *sar
 		c.sub.Reply,
 		c.sub.DeadLetter,
 		c.sub.RetryConfig,
+		[]binding.Transformer{&te}...,
 	)
+
+	args := eventingchannels.ReportArgs{
+		Ns:        c.channelNs,
+		EventType: string(te),
+	}
+	_ = fanout.ParseDispatchResultAndReportMetrics(fanout.NewDispatchResult(err, dispatchExecutionInfo), c.reporter, args)
 
 	// NOTE: only return `true` here if DispatchMessage actually delivered the message.
 	return err == nil, err
