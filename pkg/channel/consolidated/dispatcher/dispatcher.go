@@ -30,10 +30,10 @@ import (
 	"go.uber.org/zap"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/sets"
+	"knative.dev/pkg/kmeta"
 	"knative.dev/pkg/logging"
 
 	eventingchannels "knative.dev/eventing/pkg/channel"
-	"knative.dev/pkg/kmeta"
 
 	"knative.dev/eventing-kafka/pkg/channel/consolidated/utils"
 	"knative.dev/eventing-kafka/pkg/channel/distributed/common/env"
